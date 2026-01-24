@@ -13,7 +13,7 @@ int main(void)
     int w = 800;
     int h = 600;
     Canvas *c = create_canvas(w, h);
-    uint32_t red = pack_color(255, 0, 0, 255);
+    uint32_t red = RGBA(255, 0, 0, 255);
     printf("Color Value: 0x%08X\n", red);
     draw_rect(c, 100, 100, 200, 300, red);
     uint32_t *pixels = get_pixels(c);
