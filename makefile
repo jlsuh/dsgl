@@ -23,10 +23,10 @@ directories:
 	mkdir -p $(OUT_DIR)
 
 $(TARGET): $(APP_SRC) $(LIB_SRC)
-	$(CC) $(CFLAGS) $(LIB_SRC) $(APP_SRC) -o $(TARGET)
+	$(CC) $(CFLAGS) $(LIB_SRC) $(APP_SRC) -o $(TARGET).out
 
 run: all
-	./$(TARGET)
+	./$(TARGET).out
 
 clean:
 	rm -rf build output
