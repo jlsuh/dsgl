@@ -1,5 +1,4 @@
 -Wall
 -Wextra
--I.
+-Iinclude
 -Ivendor
--DDSGL_LINT

@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -I. -isystem vendor -g -fsanitize=address,undefined
+CFLAGS = -Wall -Wextra -Iinclude -isystem vendor -g -fsanitize=address,undefined
 
 UNAME_S := $(shell uname -s)
 
@@ -16,7 +16,7 @@ ifeq ($(SRC),)
 endif
 
 APP_SRC = examples/$(SRC).c
-LIB_SRC = dsgl.c
+LIB_SRC = src/dsgl.c
 BIN_DIR = build/bin
 OUT_DIR = output
 
@@ -30,7 +30,7 @@ directories:
 	mkdir -p $(BIN_DIR)
 	mkdir -p $(OUT_DIR)
 
-$(TARGET): $(APP_SRC) $(LIB_SRC) dsgl.h | directories
+$(TARGET): $(APP_SRC) $(LIB_SRC) include/dsgl.h | directories
 	$(CC) $(CFLAGS) $(APP_SRC) $(LIB_SRC) -o $@ -lm
 
 run: all
