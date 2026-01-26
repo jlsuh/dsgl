@@ -37,15 +37,15 @@ int8_t dsgl_fill_rect(Dsgl_Canvas self, int x0, int y0, int width, int height,
         return -1;
     if (width <= 0 || height <= 0)
         return -1;
-    int x1 = dsgl_clamp(x0, 0, self.width);
-    int y1 = dsgl_clamp(y0, 0, self.height);
-    int x2 = dsgl_clamp(x0 + width, 0, self.width);
-    int y2 = dsgl_clamp(y0 + height, 0, self.height);
-    if (x2 <= x1 || y2 <= y1)
+    x0 = dsgl_clamp(x0, 0, self.width);
+    y0 = dsgl_clamp(y0, 0, self.height);
+    int x1 = dsgl_clamp(x0 + width, 0, self.width);
+    int y1 = dsgl_clamp(y0 + height, 0, self.height);
+    if (x1 <= x0 || y1 <= y0)
         return -1;
-    for (int y = y1; y < y2; ++y) {
+    for (int y = y0; y < y1; ++y) {
         uint32_t *row = self.pixels + (y * self.width);
-        for (int x = x1; x < x2; ++x) {
+        for (int x = x0; x < x1; ++x) {
             row[x] = color;
         }
     }
