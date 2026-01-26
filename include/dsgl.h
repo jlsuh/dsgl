@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+#define DSGL_CANVAS_NULL ((Dsgl_Canvas){0})
 #define DSGL_MAX_DIM 8192
 
 #define RGBA(r, g, b, a)                                                       \

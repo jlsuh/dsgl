@@ -14,18 +14,14 @@ static inline int dsgl_clamp(int value, int min, int max)
 
 Dsgl_Canvas dsgl_create_canvas(uint32_t *pixels, int width, int height)
 {
-    Dsgl_Canvas error = {0};
-    if (NULL == pixels) {
-        fprintf(stderr, "Error: Pixels NULL\n");
-        return error;
-    }
     if (width <= 0 || height <= 0) {
-        fprintf(stderr, "Error: Dims invalid\n");
-        return error;
+        return DSGL_CANVAS_NULL;
     }
     if (width > DSGL_MAX_DIM || height > DSGL_MAX_DIM) {
-        fprintf(stderr, "Error: DSGL_MAX_DIM\n");
-        return error;
+        return DSGL_CANVAS_NULL;
+    }
+    if (NULL == pixels) {
+        return DSGL_CANVAS_NULL;
     }
     return (Dsgl_Canvas){.pixels = pixels, .width = width, .height = height};
 }
