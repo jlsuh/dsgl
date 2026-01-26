@@ -19,7 +19,7 @@ APP_SRC = examples/$(SRC).c
 BIN_DIR = build/bin
 OUT_DIR = output
 
-TARGET = $(BIN_DIR)/$(SRC)
+TARGET = $(BIN_DIR)/$(SRC).out
 
 .PHONY: all directories clean run
 

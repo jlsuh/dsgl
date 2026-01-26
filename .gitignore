@@ -88,4 +88,8 @@ Temporary Items
 # iCloud generated files
 *.icloud
 
+### Project Specific ###
+build/
+output/
+
 # End of https://www.toptal.com/developers/gitignore/api/c,macos
