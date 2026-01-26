@@ -1,5 +1,5 @@
+#include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 #define DSGL_IMPLEMENTATION
 #include <dsgl.c>

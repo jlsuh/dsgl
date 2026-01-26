@@ -17,7 +17,6 @@ typedef struct {
 } Dsgl_Canvas;
 
 Dsgl_Canvas dsgl_create_canvas(uint32_t *pixels, size_t width, size_t height);
-uint32_t *dsgl_get_pixels(Dsgl_Canvas self);
 int8_t dsgl_fill_rect(Dsgl_Canvas self, int x0, int y0, size_t width,
                       size_t height, uint32_t color);
 void dsgl_stroke_rect(Dsgl_Canvas self, int x0, int y0, size_t width,
@@ -29,7 +28,7 @@ void dsgl_stroke_rect(Dsgl_Canvas self, int x0, int y0, size_t width,
 
 #define DSGL_MAX_DIM 8192
 
-static inline int dsgl_clamp(int value, int min, int max)
+static inline int dsgl__clamp(int value, int min, int max)
 {
     if (value < min)
         return min;
@@ -61,10 +60,10 @@ int8_t dsgl_fill_rect(Dsgl_Canvas self, int x0, int y0, size_t width,
 {
     if (NULL == self.pixels)
         return -1;
-    int clamped_x0 = dsgl_clamp(x0, 0, (int)self.width);
-    int clamped_y0 = dsgl_clamp(y0, 0, (int)self.height);
-    int clamped_x1 = dsgl_clamp(x0 + (int)width, 0, (int)self.width);
-    int clamped_y1 = dsgl_clamp(y0 + (int)height, 0, (int)self.height);
+    int clamped_x0 = dsgl__clamp(x0, 0, (int)self.width);
+    int clamped_y0 = dsgl__clamp(y0, 0, (int)self.height);
+    int clamped_x1 = dsgl__clamp(x0 + (int)width, 0, (int)self.width);
+    int clamped_y1 = dsgl__clamp(y0 + (int)height, 0, (int)self.height);
     if (clamped_x1 <= clamped_x0 || clamped_y1 <= clamped_y0)
         return -1;
     for (size_t y = (size_t)clamped_y0; y < (size_t)clamped_y1; ++y) {
