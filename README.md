@@ -1,1 +1,1 @@
-# Dead-Simple Rasterizer
+# Dead-Simple Graphics Library
