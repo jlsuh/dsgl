@@ -2,4 +2,4 @@
 -Wextra
 -I.
 -Ivendor
--DDSGL_IMPLEMENTATION
+-DDSGL_LINT

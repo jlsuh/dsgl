@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #define DSGL_IMPLEMENTATION
-#include "dsgl.h"
+#include <dsgl.c>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"

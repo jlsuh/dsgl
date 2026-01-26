@@ -25,7 +25,7 @@ void dsgl_stroke_rect(Dsgl_Canvas self, int x0, int y0, size_t width,
 
 #endif // DSGL_H_
 
-#ifdef DSGL_IMPLEMENTATION
+#if defined(DSGL_IMPLEMENTATION) || defined(DSGL_LINT)
 
 #define DSGL_MAX_DIM 8192
 
