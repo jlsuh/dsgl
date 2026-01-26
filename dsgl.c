@@ -1,34 +1,9 @@
-#ifndef DSGL_H_
-#define DSGL_H_
+#include "dsgl.h"
 
 #include <stdint.h>
 #include <stdio.h>
 
-#define RGBA(r, g, b, a)                                                       \
-    ((((uint32_t)(a) & 0xFF) << 24) | (((uint32_t)(b) & 0xFF) << 16) |         \
-     (((uint32_t)(g) & 0xFF) << 8) | (((uint32_t)(r) & 0xFF)))
-
-#define C_BLUE RGBA(0, 0, 255, 255)
-
-typedef struct {
-    uint32_t *pixels;
-    size_t width;
-    size_t height;
-} Dsgl_Canvas;
-
-Dsgl_Canvas dsgl_create_canvas(uint32_t *pixels, size_t width, size_t height);
-int8_t dsgl_fill_rect(Dsgl_Canvas self, int x0, int y0, size_t width,
-                      size_t height, uint32_t color);
-void dsgl_stroke_rect(Dsgl_Canvas self, int x0, int y0, size_t width,
-                      size_t height, size_t border, uint32_t color);
-
-#endif // DSGL_H_
-
-#if defined(DSGL_IMPLEMENTATION) || defined(DSGL_LINT)
-
-#define DSGL_MAX_DIM 8192
-
-static inline int dsgl__clamp(int value, int min, int max)
+static inline int dsgl_clamp(int value, int min, int max)
 {
     if (value < min)
         return min;
@@ -37,15 +12,15 @@ static inline int dsgl__clamp(int value, int min, int max)
     return value;
 }
 
-Dsgl_Canvas dsgl_create_canvas(uint32_t *pixels, size_t width, size_t height)
+Dsgl_Canvas dsgl_create_canvas(uint32_t *pixels, int width, int height)
 {
     Dsgl_Canvas error = {0};
     if (NULL == pixels) {
         fprintf(stderr, "Error: Pixels NULL\n");
         return error;
     }
-    if (0 == width || 0 == height) {
-        fprintf(stderr, "Error: Dims zero\n");
+    if (width <= 0 || height <= 0) {
+        fprintf(stderr, "Error: Dims invalid\n");
         return error;
     }
     if (width > DSGL_MAX_DIM || height > DSGL_MAX_DIM) {
@@ -55,42 +30,40 @@ Dsgl_Canvas dsgl_create_canvas(uint32_t *pixels, size_t width, size_t height)
     return (Dsgl_Canvas){.pixels = pixels, .width = width, .height = height};
 }
 
-int8_t dsgl_fill_rect(Dsgl_Canvas self, int x0, int y0, size_t width,
-                      size_t height, uint32_t color)
+int8_t dsgl_fill_rect(Dsgl_Canvas self, int x0, int y0, int width, int height,
+                      uint32_t color)
 {
     if (NULL == self.pixels)
         return -1;
-    int clamped_x0 = dsgl__clamp(x0, 0, (int)self.width);
-    int clamped_y0 = dsgl__clamp(y0, 0, (int)self.height);
-    int clamped_x1 = dsgl__clamp(x0 + (int)width, 0, (int)self.width);
-    int clamped_y1 = dsgl__clamp(y0 + (int)height, 0, (int)self.height);
-    if (clamped_x1 <= clamped_x0 || clamped_y1 <= clamped_y0)
+    if (width <= 0 || height <= 0)
         return -1;
-    for (size_t y = (size_t)clamped_y0; y < (size_t)clamped_y1; ++y) {
+    int x1 = dsgl_clamp(x0, 0, self.width);
+    int y1 = dsgl_clamp(y0, 0, self.height);
+    int x2 = dsgl_clamp(x0 + width, 0, self.width);
+    int y2 = dsgl_clamp(y0 + height, 0, self.height);
+    if (x2 <= x1 || y2 <= y1)
+        return -1;
+    for (int y = y1; y < y2; ++y) {
         uint32_t *row = self.pixels + (y * self.width);
-        for (size_t x = (size_t)clamped_x0; x < (size_t)clamped_x1; ++x) {
+        for (int x = x1; x < x2; ++x) {
             row[x] = color;
         }
     }
     return 0;
 }
 
-void dsgl_stroke_rect(Dsgl_Canvas self, int x0, int y0, size_t width,
-                      size_t height, size_t border, uint32_t color)
+void dsgl_stroke_rect(Dsgl_Canvas self, int x0, int y0, int width, int height,
+                      int border, uint32_t color)
 {
-    if (0 == border || NULL == self.pixels)
+    if (border <= 0 || NULL == self.pixels)
         return;
     if (border * 2 >= width || border * 2 >= height) {
         dsgl_fill_rect(self, x0, y0, width, height, color);
         return;
     }
-    int b = (int)border;
-    int w = (int)width;
-    int h = (int)height;
     dsgl_fill_rect(self, x0, y0, width, border, color);
-    dsgl_fill_rect(self, x0, y0 + h - b, width, border, color);
-    dsgl_fill_rect(self, x0, y0 + b, border, height - (2 * b), color);
-    dsgl_fill_rect(self, x0 + w - b, y0 + b, border, height - (2 * b), color);
+    dsgl_fill_rect(self, x0, y0 + height - border, width, border, color);
+    dsgl_fill_rect(self, x0, y0 + border, border, height - (2 * border), color);
+    dsgl_fill_rect(self, x0 + width - border, y0 + border, border,
+                   height - (2 * border), color);
 }
-
-#endif // DSGL_IMPLEMENTATION

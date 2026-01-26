@@ -16,6 +16,7 @@ ifeq ($(SRC),)
 endif
 
 APP_SRC = examples/$(SRC).c
+LIB_SRC = dsgl.c
 BIN_DIR = build/bin
 OUT_DIR = output
 
@@ -29,8 +30,8 @@ directories:
 	mkdir -p $(BIN_DIR)
 	mkdir -p $(OUT_DIR)
 
-$(TARGET): $(APP_SRC) dsgl.c | directories
-	$(CC) $(CFLAGS) $(APP_SRC) -o $@ -lm
+$(TARGET): $(APP_SRC) $(LIB_SRC) dsgl.h | directories
+	$(CC) $(CFLAGS) $(APP_SRC) $(LIB_SRC) -o $@ -lm
 
 run: all
 	$(RUN_ENV) ./$(TARGET)

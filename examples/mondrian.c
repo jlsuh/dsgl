@@ -1,8 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define DSGL_IMPLEMENTATION
-#include <dsgl.c>
+#include "dsgl.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
@@ -17,8 +16,8 @@
 
 int main(void)
 {
-    size_t w = 600;
-    size_t h = 600;
+    int w = 600;
+    int h = 600;
     uint32_t *pixels = calloc(w * h, sizeof(*pixels));
     Dsgl_Canvas c = dsgl_create_canvas(pixels, w, h);
     dsgl_fill_rect(c, 0, 0, w, h, C_MONDRIAN_WHITE);
@@ -42,8 +41,7 @@ int main(void)
                    C_MONDRIAN_BLACK);
     dsgl_fill_rect(c, x_split_right, y_split_right, w - x_split_right,
                    line_thick, C_MONDRIAN_BLACK);
-    stbi_write_png(FILENAME, (int)w, (int)h, 4, pixels,
-                   (int)w * sizeof(*pixels));
+    stbi_write_png(FILENAME, w, h, 4, pixels, w * sizeof(*pixels));
     free(pixels);
     return 0;
 }
