@@ -1,5 +1,13 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -I. -Ivendor
+CFLAGS = -Wall -Wextra -I. -isystem vendor -g -fsanitize=address,undefined
+
+UNAME_S := $(shell uname -s)
+
+RUN_ENV =
+
+ifeq ($(UNAME_S),Darwin)
+	RUN_ENV = MallocNanoZone=0
+endif
 
 ifeq ($(SRC),)
   ifneq ($(MAKECMDGOALS),clean)
@@ -21,11 +29,11 @@ directories:
 	mkdir -p $(BIN_DIR)
 	mkdir -p $(OUT_DIR)
 
-$(TARGET): $(APP_SRC) dsgl.h
-	$(CC) $(CFLAGS) $(APP_SRC) -o $(TARGET).out
+$(TARGET): $(APP_SRC) dsgl.c | directories
+	$(CC) $(CFLAGS) $(APP_SRC) -o $@ -lm
 
 run: all
-	./$(TARGET).out
+	$(RUN_ENV) ./$(TARGET)
 
 clean:
 	rm -rf build output
