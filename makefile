@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Iinclude
+CFLAGS = -Wall -Wextra -I. -Ivendor
 
 ifeq ($(SRC),)
   ifneq ($(MAKECMDGOALS),clean)
@@ -7,7 +7,6 @@ ifeq ($(SRC),)
   endif
 endif
 
-LIB_SRC = src/canvas.c
 APP_SRC = examples/$(SRC).c
 BIN_DIR = build/bin
 OUT_DIR = output
@@ -22,8 +21,8 @@ directories:
 	mkdir -p $(BIN_DIR)
 	mkdir -p $(OUT_DIR)
 
-$(TARGET): $(APP_SRC) $(LIB_SRC)
-	$(CC) $(CFLAGS) $(LIB_SRC) $(APP_SRC) -o $(TARGET).out
+$(TARGET): $(APP_SRC) dsgl.h
+	$(CC) $(CFLAGS) $(APP_SRC) -o $(TARGET).out
 
 run: all
 	./$(TARGET).out

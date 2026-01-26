@@ -1,3 +1,5 @@
--Iinclude
 -Wall
 -Wextra
+-I.
+-Ivendor
+-DDSGL_IMPLEMENTATION
