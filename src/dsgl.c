@@ -15,15 +15,12 @@ static inline int dsgl_clamp(int value, int min, int max)
 
 Dsgl_Canvas dsgl_create_canvas(uint32_t *pixels, int width, int height)
 {
-    if (width <= 0 || height <= 0) {
+    if (width <= 0 || height <= 0)
         return DSGL_CANVAS_NULL;
-    }
-    if (width > DSGL_MAX_DIM || height > DSGL_MAX_DIM) {
+    if (width > DSGL_MAX_DIM || height > DSGL_MAX_DIM)
         return DSGL_CANVAS_NULL;
-    }
-    if (NULL == pixels) {
+    if (NULL == pixels)
         return DSGL_CANVAS_NULL;
-    }
     return (Dsgl_Canvas){.pixels = pixels, .width = width, .height = height};
 }
 
@@ -42,9 +39,8 @@ int8_t dsgl_fill_rect(Dsgl_Canvas self, int x0, int y0, int width, int height,
         return DSGL_FAILURE;
     for (int y = y0; y < y1; ++y) {
         uint32_t *row = self.pixels + (y * self.width);
-        for (int x = x0; x < x1; ++x) {
+        for (int x = x0; x < x1; ++x)
             row[x] = color;
-        }
     }
     return DSGL_SUCCESS;
 }
