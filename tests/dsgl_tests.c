@@ -80,7 +80,25 @@ void Creating_a_canvas_with_valid_parameters_returns_an_initialized_canvas(void)
     TEST_ASSERT_EQUAL_INT(HEIGHT, c.height);
 }
 
+void Run_dsgl_create_canvas_tests(void)
+{
+    RUN_TEST(Creating_a_canvas_with_null_pixels_returns_a_null_canvas);
+    RUN_TEST(Creating_a_canvas_with_0_width_returns_a_null_canvas);
+    RUN_TEST(Creating_a_canvas_with_negative_width_returns_a_null_canvas);
+    RUN_TEST(Creating_a_canvas_with_0_height_returns_a_null_canvas);
+    RUN_TEST(Creating_a_canvas_with_negative_height_returns_a_null_canvas);
+    RUN_TEST(
+        Creating_a_canvas_with_width_greater_than_maximum_dimension_returns_a_null_canvas);
+    RUN_TEST(
+        Creating_a_canvas_with_height_greater_than_maximum_dimension_returns_a_null_canvas);
+    RUN_TEST(
+        Creating_a_canvas_with_maximum_dimensions_returns_an_initialized_canvas);
+    RUN_TEST(
+        Creating_a_canvas_with_valid_parameters_returns_an_initialized_canvas);
+}
+
 //////////////////// dsgl_fill_rect ////////////////////
+////////// pre-clamp //////////
 void Filling_a_rectangle_on_a_canvas_with_null_pixels_returns_failure(void)
 {
     Dsgl_Canvas c = DSGL_CANVAS_NULL;
@@ -235,54 +253,37 @@ void Filling_a_rectangle_larger_than_canvas_covers_entire_area(void)
     assert_rect_drawn(c, 0, 0, WIDTH, HEIGHT, COLOR);
 }
 
-int main(void)
+void Run_dsgl_fill_rect_tests(void)
 {
-    UNITY_BEGIN();
-
-    //////////////////// dsgl_create_canvas ////////////////////
-    RUN_TEST(Creating_a_canvas_with_null_pixels_returns_a_null_canvas);
-    RUN_TEST(Creating_a_canvas_with_0_width_returns_a_null_canvas);
-    RUN_TEST(Creating_a_canvas_with_negative_width_returns_a_null_canvas);
-    RUN_TEST(Creating_a_canvas_with_0_height_returns_a_null_canvas);
-    RUN_TEST(Creating_a_canvas_with_negative_height_returns_a_null_canvas);
-    RUN_TEST(
-        Creating_a_canvas_with_width_greater_than_maximum_dimension_returns_a_null_canvas);
-    RUN_TEST(
-        Creating_a_canvas_with_height_greater_than_maximum_dimension_returns_a_null_canvas);
-    RUN_TEST(
-        Creating_a_canvas_with_maximum_dimensions_returns_an_initialized_canvas);
-    RUN_TEST(
-        Creating_a_canvas_with_valid_parameters_returns_an_initialized_canvas);
-
-    //////////////////// dsgl_fill_rect ////////////////////
     RUN_TEST(Filling_a_rectangle_on_a_canvas_with_null_pixels_returns_failure);
     RUN_TEST(Filling_a_rectangle_with_0_width_returns_failure);
     RUN_TEST(Filling_a_rectangle_with_negative_width_returns_failure);
     RUN_TEST(Filling_a_rectangle_with_0_height_returns_failure);
     RUN_TEST(Filling_a_rectangle_with_negative_height_returns_failure);
-
     ////////// left //////////
     RUN_TEST(Filling_a_rectangle_extending_off_the_left_edge_clips_correctly);
     RUN_TEST(
         Filling_a_rectangle_entirely_outside_the_left_edge_returns_failure);
-
     ////////// top //////////
     RUN_TEST(Filing_a_rectangle_extending_off_the_top_edge_clips_correctly);
     RUN_TEST(Filling_a_rectangle_entirely_above_the_top_edge_returns_failure);
-
     ////////// right //////////
     RUN_TEST(Filling_a_rectangle_at_the_right_edge_boundary_succeeds);
     RUN_TEST(Filling_a_rectangle_entirely_past_the_right_edge_returns_failure);
     RUN_TEST(Filling_a_single_pixel_at_the_right_edge_succeeds);
-
     ////////// bottom //////////
     RUN_TEST(Filling_a_rectangle_at_the_bottom_edge_boundary_succeeds);
     RUN_TEST(
         Filling_a_rectangle_entirely_below_the_bottom_edge_returns_failure);
     RUN_TEST(Filling_a_single_pixel_at_the_bottom_edge_succeeds);
-
     ////////// full area //////////
     RUN_TEST(Filling_a_rectangle_larger_than_canvas_covers_entire_area);
+}
 
+int main(void)
+{
+    UNITY_BEGIN();
+    Run_dsgl_create_canvas_tests();
+    Run_dsgl_fill_rect_tests();
     return UNITY_END();
 }
