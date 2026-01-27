@@ -1,5 +1,6 @@
 #include "dsgl.h"
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -30,22 +31,22 @@ int8_t dsgl_fill_rect(Dsgl_Canvas self, int x0, int y0, int width, int height,
                       uint32_t color)
 {
     if (NULL == self.pixels)
-        return -1;
+        return DSGL_FAILURE;
     if (width <= 0 || height <= 0)
-        return -1;
-    x0 = dsgl_clamp(x0, 0, self.width);
-    y0 = dsgl_clamp(y0, 0, self.height);
+        return DSGL_FAILURE;
     int x1 = dsgl_clamp(x0 + width, 0, self.width);
     int y1 = dsgl_clamp(y0 + height, 0, self.height);
+    x0 = dsgl_clamp(x0, 0, self.width);
+    y0 = dsgl_clamp(y0, 0, self.height);
     if (x1 <= x0 || y1 <= y0)
-        return -1;
+        return DSGL_FAILURE;
     for (int y = y0; y < y1; ++y) {
         uint32_t *row = self.pixels + (y * self.width);
         for (int x = x0; x < x1; ++x) {
             row[x] = color;
         }
     }
-    return 0;
+    return DSGL_SUCCESS;
 }
 
 void dsgl_stroke_rect(Dsgl_Canvas self, int x0, int y0, int width, int height,
