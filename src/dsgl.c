@@ -1,24 +1,7 @@
 #include "dsgl.h"
 
-#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-
-static inline int dsgl_clamp(int value, int min, int max)
-{
-    if (value < min)
-        return min;
-    if (value > max)
-        return max;
-    return value;
-}
-
-static inline void dsgl_swap(int *a, int *b)
-{
-    int temp = *a;
-    *a = *b;
-    *b = temp;
-}
 
 Dsgl_Canvas dsgl_create_canvas(uint32_t *pixels, int width, int height)
 {
@@ -39,13 +22,13 @@ int8_t dsgl_fill_rect(Dsgl_Canvas self, int x0, int y0, int width, int height,
     int x1 = x0 + width;
     int y1 = y0 + height;
     if (x1 < x0)
-        dsgl_swap(&x0, &x1);
+        DSGL_SWAP(x0, x1);
     if (y1 < y0)
-        dsgl_swap(&y0, &y1);
-    x0 = dsgl_clamp(x0, 0, self.width);
-    y0 = dsgl_clamp(y0, 0, self.height);
-    x1 = dsgl_clamp(x1, 0, self.width);
-    y1 = dsgl_clamp(y1, 0, self.height);
+        DSGL_SWAP(y0, y1);
+    x0 = DSGL_CLAMP(x0, 0, self.width);
+    y0 = DSGL_CLAMP(y0, 0, self.height);
+    x1 = DSGL_CLAMP(x1, 0, self.width);
+    y1 = DSGL_CLAMP(y1, 0, self.height);
     if (x1 <= x0 || y1 <= y0)
         return DSGL_FAILURE;
     for (int y = y0; y < y1; ++y) {

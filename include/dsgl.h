@@ -14,6 +14,16 @@
 
 #define C_BLUE RGBA(0, 0, 255, 255)
 
+#define DSGL_CLAMP(val, min, max)                                              \
+    (((val) < (min)) ? (min) : (((val) > (max)) ? (max) : (val)))
+
+#define DSGL_SWAP(a, b)                                                        \
+    do {                                                                       \
+        int t = (a);                                                           \
+        (a) = (b);                                                             \
+        (b) = t;                                                               \
+    } while (0)
+
 typedef struct {
     uint32_t *pixels;
     int width;
