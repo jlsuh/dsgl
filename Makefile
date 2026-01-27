@@ -10,8 +10,8 @@ endif
 
 ifeq ($(SRC),)
   ifneq ($(MAKECMDGOALS),clean)
-  ifneq ($(MAKECMDGOALS),tests)
-    $(error SRC is not set. Usage: 'make run SRC=file_name' or 'make tests')
+  ifneq ($(MAKECMDGOALS),test)
+    $(error SRC is not set. Usage: 'make run SRC=file_name' or 'make test')
   endif
   endif
 endif
@@ -34,7 +34,7 @@ APP_SRC ?= examples/$(SRC).c
 APP_OBJ ?= $(BUILD_DIR)/$(SRC).o
 TARGET   = $(BIN_DIR)/$(SRC).out
 
-.PHONY: all directories clean run tests
+.PHONY: all directories clean run test
 
 all: directories $(TARGET)
 
@@ -52,7 +52,7 @@ $(BUILD_DIR)/%.o: examples/%.c include/dsgl.h | directories
 $(LIB_OBJ): $(LIB_SRC) include/dsgl.h | directories
 	$(CC) $(CFLAGS) -c $(LIB_SRC) -o $@
 
-tests: $(TEST_BIN)
+test: $(TEST_BIN)
 	$(RUN_ENV) ./$(TEST_BIN)
 
 $(TEST_BIN): $(TEST_OBJ) $(LIB_OBJ) $(UNITY_OBJ)
