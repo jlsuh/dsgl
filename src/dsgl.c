@@ -42,9 +42,9 @@ int8_t dsgl_fill_rect(Dsgl_Canvas self, int x0, int y0, int width, int height,
 void dsgl_stroke_rect(Dsgl_Canvas self, int x0, int y0, int width, int height,
                       int border, uint32_t color)
 {
-    if (border <= 0 || NULL == self.pixels)
+    if (0 == border || NULL == self.pixels)
         return;
-    if (border * 2 >= width || border * 2 >= height) {
+    if (border > 0 && (border * 2 >= width || border * 2 >= height)) {
         dsgl_fill_rect(self, x0, y0, width, height, color);
         return;
     }
