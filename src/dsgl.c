@@ -29,7 +29,7 @@ int8_t dsgl_fill_rect(Dsgl_Canvas self, int x0, int y0, int width, int height,
     y0 = DSGL_CLAMP(y0, 0, self.height);
     x1 = DSGL_CLAMP(x1, 0, self.width);
     y1 = DSGL_CLAMP(y1, 0, self.height);
-    if (x1 <= x0 || y1 <= y0)
+    if (x1 == x0 || y1 == y0)
         return DSGL_FAILURE;
     for (int y = y0; y < y1; ++y) {
         uint32_t *row = self.pixels + (y * self.width);
