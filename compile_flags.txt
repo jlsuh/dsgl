@@ -4,3 +4,4 @@
 -Ivendor
 -Ivendor/unity
 -Itests
+-Iexamples

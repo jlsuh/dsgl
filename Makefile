@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Iinclude -Ivendor -Ivendor/unity -Itests -g -fsanitize=address,undefined
+CFLAGS = -Wall -Wextra -Iinclude -Ivendor -Ivendor/unity -Itests -Iexamples -g -fsanitize=address,undefined
 
 UNAME_S := $(shell uname -s)
 RUN_ENV =
@@ -30,9 +30,21 @@ TEST_SRC = tests/dsgl_tests.c
 TEST_OBJ = $(BUILD_DIR)/dsgl_tests.o
 TEST_BIN = $(BIN_DIR)/tests.out
 
-APP_SRC ?= examples/$(SRC).c
-APP_OBJ ?= $(BUILD_DIR)/$(SRC).o
-TARGET   = $(BIN_DIR)/$(SRC).out
+ifneq ($(wildcard examples/to_png/$(SRC).c),)
+    APP_SRC = examples/to_png/$(SRC).c
+    APP_OBJ = $(BUILD_DIR)/$(SRC)_main.o
+    ifneq ($(wildcard examples/$(SRC).c),)
+        HELPER_SRC = examples/$(SRC).c
+        HELPER_OBJ = $(BUILD_DIR)/$(SRC)_lib.o
+    endif
+
+else
+    APP_SRC = examples/$(SRC).c
+    APP_OBJ = $(BUILD_DIR)/$(SRC).o
+    HELPER_OBJ = 
+endif
+
+TARGET = $(BIN_DIR)/$(SRC).out
 
 .PHONY: all directories clean run test
 
@@ -43,8 +55,14 @@ directories:
 	mkdir -p $(BUILD_DIR)
 	mkdir -p $(OUT_DIR)
 
-$(TARGET): $(APP_OBJ) $(LIB_OBJ)
-	$(CC) $(CFLAGS) $(APP_OBJ) $(LIB_OBJ) -o $@ -lm
+$(TARGET): $(APP_OBJ) $(HELPER_OBJ) $(LIB_OBJ)
+	$(CC) $(CFLAGS) $(APP_OBJ) $(HELPER_OBJ) $(LIB_OBJ) -o $@ -lm
+
+$(BUILD_DIR)/%_main.o: examples/to_png/%.c include/dsgl.h | directories
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/%_lib.o: examples/%.c include/dsgl.h | directories
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/%.o: examples/%.c include/dsgl.h | directories
 	$(CC) $(CFLAGS) -c $< -o $@
