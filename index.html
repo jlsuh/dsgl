@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>DSGL Wasm Gallery</title>
+    <style>
+      body {
+        background: #222;
+        color: #eee;
+        font-family: sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+      }
+      h1 {
+        margin-bottom: 30px;
+      }
+      .gallery {
+        display: flex;
+        gap: 40px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .artwork {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .artwork h2 {
+        margin-bottom: 10px;
+        font-weight: lighter;
+      }
+      canvas {
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        background: #000;
+        height: auto;
+        max-width: 100%;
+      }
+      #error-banner {
+        display: none;
+        background: #d9534f;
+        color: white;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        max-width: 800px;
+        text-align: center;
+        line-height: 1.5;
+      }
+      code {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 2px 5px;
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>DSGL WebAssembly Gallery</h1>
+    <div id="error-banner"></div>
+    <div class="gallery">
+      <div class="artwork">
+        <h2>Mondrian</h2>
+        <canvas id="mondrian-canvas" width="600" height="600"></canvas>
+      </div>
+      <div class="artwork">
+        <h2>Patterns Negative</h2>
+        <canvas id="patterns-canvas" width="800" height="600"></canvas>
+      </div>
+    </div>
+    <script>
+      async function loadWasmImage(wasmPath, canvasId, width, height) {
+        try {
+          const memory = new WebAssembly.Memory({ initial: 80 });
+          const imports = {
+            env: {
+              memory: memory,
+            },
+          };
+          const response = await fetch(wasmPath);
+          if (!response.ok) {
+            throw new Error(`Fetch failed: ${response.status}`);
+          }
+          const bytes = await response.arrayBuffer();
+          const { instance } = await WebAssembly.instantiate(bytes, imports);
+          if (typeof instance.exports.render !== 'function') {
+            throw new Error("'render' not found in Wasm module.");
+          }
+          instance.exports.render();
+          if (!instance.exports.pixels) {
+            throw new Error(
+              "'pixels' not found. Did you add -Wl,--export=pixels?",
+            );
+          }
+          const pixelsPtr = instance.exports.pixels.value;
+          const wasmMemory = instance.exports.memory || memory;
+          const memoryArray = new Uint8ClampedArray(
+            wasmMemory.buffer,
+            pixelsPtr,
+            width * height * 4,
+          );
+          const canvas = document.getElementById(canvasId);
+          if (!canvas) throw new Error(`Canvas '${canvasId}' not found.`);
+          const ctx = canvas.getContext('2d');
+          const imageData = new ImageData(memoryArray, width, height);
+          ctx.putImageData(imageData, 0, 0);
+          console.log(`Rendered from: ${wasmPath}`);
+        } catch (err) {
+          console.error(`Failed to load ${wasmPath}:`, err);
+        }
+      }
+      loadWasmImage(
+        'examples/to_wasm/mondrian.wasm',
+        'mondrian-canvas',
+        600,
+        600,
+      );
+      loadWasmImage(
+        'examples/to_wasm/patterns_negative.wasm',
+        'patterns-canvas',
+        800,
+        600,
+      );
+    </script>
+  </body>
+</html>
