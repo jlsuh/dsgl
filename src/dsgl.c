@@ -1,7 +1,6 @@
 #include "dsgl.h"
 
-#include <stdint.h>
-#include <stdio.h>
+#include <stddef.h>
 
 Dsgl_Canvas dsgl_create_canvas(uint32_t *pixels, int width, int height)
 {
@@ -14,10 +13,10 @@ Dsgl_Canvas dsgl_create_canvas(uint32_t *pixels, int width, int height)
     return (Dsgl_Canvas){.pixels = pixels, .width = width, .height = height};
 }
 
-int8_t dsgl_fill_rect(Dsgl_Canvas self, int x0, int y0, int width, int height,
+int8_t dsgl_fill_rect(Dsgl_Canvas *self, int x0, int y0, int width, int height,
                       uint32_t color)
 {
-    if (NULL == self.pixels)
+    if (NULL == self->pixels)
         return DSGL_FAILURE;
     int x1 = x0 + width;
     int y1 = y0 + height;
@@ -25,24 +24,24 @@ int8_t dsgl_fill_rect(Dsgl_Canvas self, int x0, int y0, int width, int height,
         DSGL_SWAP(x0, x1);
     if (y1 < y0)
         DSGL_SWAP(y0, y1);
-    x0 = DSGL_CLAMP(x0, 0, self.width);
-    y0 = DSGL_CLAMP(y0, 0, self.height);
-    x1 = DSGL_CLAMP(x1, 0, self.width);
-    y1 = DSGL_CLAMP(y1, 0, self.height);
+    x0 = DSGL_CLAMP(x0, 0, self->width);
+    y0 = DSGL_CLAMP(y0, 0, self->height);
+    x1 = DSGL_CLAMP(x1, 0, self->width);
+    y1 = DSGL_CLAMP(y1, 0, self->height);
     if (x1 == x0 || y1 == y0)
         return DSGL_FAILURE;
     for (int y = y0; y < y1; ++y) {
-        uint32_t *row = self.pixels + (y * self.width);
+        uint32_t *row = self->pixels + (y * self->width);
         for (int x = x0; x < x1; ++x)
             row[x] = color;
     }
     return DSGL_SUCCESS;
 }
 
-void dsgl_stroke_rect(Dsgl_Canvas self, int x0, int y0, int width, int height,
+void dsgl_stroke_rect(Dsgl_Canvas *self, int x0, int y0, int width, int height,
                       int border, uint32_t color)
 {
-    if (0 == border || NULL == self.pixels)
+    if (0 == border || NULL == self->pixels)
         return;
     if (border > 0 && (border * 2 >= width || border * 2 >= height)) {
         dsgl_fill_rect(self, x0, y0, width, height, color);

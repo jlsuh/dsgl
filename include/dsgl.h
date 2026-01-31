@@ -31,9 +31,9 @@ typedef struct {
 } Dsgl_Canvas;
 
 Dsgl_Canvas dsgl_create_canvas(uint32_t *pixels, int width, int height);
-int8_t dsgl_fill_rect(Dsgl_Canvas self, int x0, int y0, int width, int height,
+int8_t dsgl_fill_rect(Dsgl_Canvas *self, int x0, int y0, int width, int height,
                       uint32_t color);
-void dsgl_stroke_rect(Dsgl_Canvas self, int x0, int y0, int width, int height,
+void dsgl_stroke_rect(Dsgl_Canvas *self, int x0, int y0, int width, int height,
                       int border, uint32_t color);
 
 #endif // DSGL_H_

@@ -11,7 +11,9 @@ endif
 ifeq ($(SRC),)
   ifneq ($(MAKECMDGOALS),clean)
   ifneq ($(MAKECMDGOALS),test)
-    $(error SRC is not set. Usage: 'make run SRC=file_name' or 'make test')
+  ifneq ($(MAKECMDGOALS),s)
+    $(error SRC is not set. Usage: 'make run SRC=filename_without_extension' or 'make test' or 'make s')
+  endif
   endif
   endif
 endif
@@ -31,22 +33,21 @@ TEST_OBJ = $(BUILD_DIR)/dsgl_tests.o
 TEST_BIN = $(BIN_DIR)/tests.out
 
 ifneq ($(wildcard examples/to_png/$(SRC).c),)
-    APP_SRC = examples/to_png/$(SRC).c
-    APP_OBJ = $(BUILD_DIR)/$(SRC)_main.o
-    ifneq ($(wildcard examples/$(SRC).c),)
-        HELPER_SRC = examples/$(SRC).c
-        HELPER_OBJ = $(BUILD_DIR)/$(SRC)_lib.o
-    endif
-
+	APP_SRC = examples/to_png/$(SRC).c
+	APP_OBJ = $(BUILD_DIR)/$(SRC)_main.o
+	ifneq ($(wildcard examples/$(SRC).c),)
+		HELPER_SRC = examples/$(SRC).c
+		HELPER_OBJ = $(BUILD_DIR)/$(SRC)_lib.o
+	endif
 else
-    APP_SRC = examples/$(SRC).c
-    APP_OBJ = $(BUILD_DIR)/$(SRC).o
-    HELPER_OBJ = 
+	APP_SRC = examples/$(SRC).c
+	APP_OBJ = $(BUILD_DIR)/$(SRC).o
+	HELPER_OBJ = 
 endif
 
 TARGET = $(BIN_DIR)/$(SRC).out
 
-.PHONY: all directories clean run test
+.PHONY: all directories clean run test wasm s
 
 all: directories $(TARGET)
 
@@ -70,6 +71,10 @@ $(BUILD_DIR)/%.o: examples/%.c include/dsgl.h | directories
 $(LIB_OBJ): $(LIB_SRC) include/dsgl.h | directories
 	$(CC) $(CFLAGS) -c $(LIB_SRC) -o $@
 
+wasm:
+	@chmod +x to_wasm.sh
+	@./to_wasm.sh $(SRC)
+
 test: $(TEST_BIN)
 	$(RUN_ENV) ./$(TEST_BIN)
 
@@ -86,4 +91,7 @@ run: all
 	$(RUN_ENV) ./$(TARGET)
 
 clean:
-	rm -rf $(BIN_DIR) $(BUILD_DIR) $(OUT_DIR)
+	rm -rf $(BIN_DIR) $(BUILD_DIR) $(OUT_DIR) examples/to_wasm
+
+s:
+	bunx serve
