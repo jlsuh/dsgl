@@ -9,7 +9,7 @@
 
 static uint32_t pixels[WIDTH * HEIGHT];
 
-Dsgl_Canvas render(uint32_t *pixels, int w, int h);
+Dsgl_Canvas render(uint32_t *pixels, int width, int height);
 
 int main(void)
 {
