@@ -26,16 +26,16 @@ echo "Using: $(which "$CC")"
 mkdir -p "$OUT_DIR"
 
 FLAGS=(
-    --target=wasm32
-    -O3
-    -flto
-    -nostdlib
-    -Wl,--no-entry
-    -Wl,--export=render
-    -Wl,--export=pixels
-    -Wl,--import-memory
-    -Wl,--allow-undefined
-    -Iinclude
+    "--target=wasm32"
+    "-O3"
+    "-flto"
+    "-nostdlib"
+    "-Wl,--no-entry"
+    "-Wl,--export=render"
+    "-Wl,--export=pixels"
+    "-Wl,--import-memory"
+    "-Wl,--allow-undefined"
+    "-Iinclude"
 )
 
 "$CC" "${FLAGS[@]}" -o "$OUT" "$SRC" "src/dsgl.c"
