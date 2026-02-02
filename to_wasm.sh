@@ -25,15 +25,30 @@ echo "Using: $(which "$CC")"
 
 mkdir -p "$OUT_DIR"
 
+EXPORTS=(
+    "-Wl,--export=render"
+    "-Wl,--export=pixels"
+    "-Wl,--export-memory"
+)
+
+if [ "$NAME" == "barcode" ]; then
+    EXPORTS+=(
+        "-Wl,--export=get_data_buffer"
+        "-Wl,--export=get_pixel_buffer"
+        "-Wl,--export=get_width"
+        "-Wl,--export=get_height"
+        "-Wl,--export=get_max_input_length"
+        "-Wl,--export=set_dpr"
+    )
+fi
+
 FLAGS=(
     "--target=wasm32"
     "-O3"
     "-flto"
     "-nostdlib"
     "-Wl,--no-entry"
-    "-Wl,--export=render"
-    "-Wl,--export=pixels"
-    "-Wl,--import-memory"
+    "${EXPORTS[@]}"
     "-Wl,--allow-undefined"
     "-Iinclude"
 )
