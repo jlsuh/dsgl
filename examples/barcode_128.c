@@ -166,13 +166,6 @@ void render(void)
     symbol_buffer[next_symbol_idx++] = 106;
     int data_symbols = next_symbol_idx - START_CHECK_STOP_SYMBOLS;
     int total_modules = 57 + (data_symbols * MODULES_PER_SYMBOL);
-    /* int calculated_width = total_modules * module_width_px; */
-    /* int calculated_height = bar_height_px + (2 * vertical_quiet_zone_px); */
-    /* if (calculated_width > MAX_WIDTH || calculated_height > MAX_HEIGHT) { */
-    /*     canvas_width = 0; */
-    /*     canvas_height = 0; */
-    /*     return; */
-    /* } */
     canvas_width = total_modules * module_width_px;
     canvas_height = bar_height_px + (2 * vertical_quiet_zone_px);
     Dsgl_Canvas c = dsgl_create_canvas(pixels, canvas_width, canvas_height);
