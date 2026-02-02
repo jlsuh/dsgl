@@ -31,7 +31,7 @@ EXPORTS=(
     "-Wl,--export-memory"
 )
 
-if [ "$NAME" == "barcode" ]; then
+if [ "$NAME" == "barcode_128" ]; then
     EXPORTS+=(
         "-Wl,--export=get_data_buffer"
         "-Wl,--export=get_pixel_buffer"

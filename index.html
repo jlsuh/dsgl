@@ -125,7 +125,7 @@
       let barcodeModule = null;
       async function initBarcode() {
         try {
-          const response = await fetch('examples/to_wasm/barcode.wasm');
+          const response = await fetch('examples/to_wasm/barcode_128.wasm');
           if (!response.ok) throw new Error(response.status);
           const bytes = await response.arrayBuffer();
           const { instance } = await WebAssembly.instantiate(bytes, {});
