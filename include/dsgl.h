@@ -6,7 +6,6 @@
 #define DSGL_SUCCESS 0
 #define DSGL_FAILURE -1
 #define DSGL_CANVAS_NULL ((Dsgl_Canvas){0})
-#define DSGL_MAX_DIM 8192
 
 #define RGBA(r, g, b, a)                                                       \
     ((((uint32_t)(a) & 0xFF) << 24) | (((uint32_t)(b) & 0xFF) << 16) |         \

@@ -6,8 +6,6 @@ Dsgl_Canvas dsgl_create_canvas(uint32_t *pixels, int width, int height)
 {
     if (width <= 0 || height <= 0)
         return DSGL_CANVAS_NULL;
-    if (width > DSGL_MAX_DIM || height > DSGL_MAX_DIM)
-        return DSGL_CANVAS_NULL;
     if (NULL == pixels)
         return DSGL_CANVAS_NULL;
     return (Dsgl_Canvas){.pixels = pixels, .width = width, .height = height};
