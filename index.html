@@ -45,6 +45,8 @@
         display: flex;
         gap: 10px;
         align-items: center;
+        flex-wrap: wrap;
+        justify-content: center;
       }
       input[type='text'],
       select {
@@ -62,6 +64,36 @@
         font-size: 0.9rem;
         color: #aaa;
         margin-left: 5px;
+      }
+      .hint {
+        margin-top: 10px;
+        font-size: 0.8rem;
+        color: #ccc;
+        background: #333;
+        padding: 10px;
+        border-radius: 4px;
+        line-height: 1.5;
+        max-width: 100%;
+      }
+      .hint code {
+        background: #555;
+        padding: 2px 5px;
+        border-radius: 3px;
+        color: #fff;
+        font-family: monospace;
+      }
+      .hint-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 5px;
+        margin-top: 5px;
+        font-size: 0.75rem;
+      }
+      .hint-grid span {
+        background: #444;
+        text-align: center;
+        padding: 2px;
+        border-radius: 2px;
       }
     </style>
   </head>
@@ -86,6 +118,31 @@
             <option value="4">4x</option>
           </select>
         </div>
+        <div class="hint">
+          <strong>Usage:</strong> Supports Subsets A, B, C.<br />
+          The encoder automatically optimizes subsets Shifting and Latching.<br />
+          Use <code>^KEY</code> for Control Characters or FNC codes.<br />
+          <br />
+          <strong>Supported Escape Codes:</strong>
+          <div class="hint-grid">
+            <span>^NUL</span><span>^SOH</span><span>^STX</span><span>^ETX</span
+            ><span>^EOT</span><span>^ENQ</span><span>^ACK</span><span>^BEL</span
+            ><span>^BS</span><span>^HT</span><span>^LF</span><span>^VT</span
+            ><span>^FF</span><span>^CR</span><span>^SO</span><span>^SI</span
+            ><span>^DLE</span><span>^DC1</span><span>^DC2</span><span>^DC3</span
+            ><span>^DC4</span><span>^NAK</span><span>^SYN</span><span>^ETB</span
+            ><span>^CAN</span><span>^EM</span><span>^SUB</span><span>^ESC</span
+            ><span>^FS</span><span>^GS</span><span>^RS</span><span>^US</span
+            ><span>^DEL</span><span>^FNC1</span><span>^FNC2</span
+            ><span>^FNC3</span> <span>^FNC4</span> <span>^CODEA</span
+            ><span>^CODEB</span><span>^CODEC</span>
+          </div>
+          <br />
+          <em
+            >Note: <code>^ABC</code> will be treated as literal text unless it
+            matches a code above.</em
+          >
+        </div>
       </div>
       <div class="artwork">
         <h2>Mondrian</h2>
@@ -99,15 +156,13 @@
     <script>
       async function loadWasmImage(wasmPath, canvasId, width, height) {
         try {
-          const memory = new WebAssembly.Memory({ initial: 80 });
-          const imports = { env: { memory: memory } };
           const response = await fetch(wasmPath);
           if (!response.ok) throw new Error(response.status);
           const bytes = await response.arrayBuffer();
-          const { instance } = await WebAssembly.instantiate(bytes, imports);
+          const { instance } = await WebAssembly.instantiate(bytes, {});
           instance.exports.render();
           const pixelsPtr = instance.exports.pixels.value;
-          const wasmMem = instance.exports.memory || memory;
+          const wasmMem = instance.exports.memory;
           const memArr = new Uint8ClampedArray(
             wasmMem.buffer,
             pixelsPtr,
@@ -134,7 +189,7 @@
             const maxLen = barcodeModule.get_max_input_length();
             const inputEl = document.getElementById('barcode-input');
             inputEl.maxLength = maxLen;
-            inputEl.title = `Max characters: ${maxLen}`;
+            inputEl.title = `Max buffer: ${maxLen} chars`;
           }
           const dpr = window.devicePixelRatio || 1;
           const roundedDpr = Math.ceil(dpr);
@@ -160,7 +215,8 @@
         }
         const text = inputEl.value;
         const inputPtr = barcodeModule.get_data_buffer();
-        const wasmMem = new Uint8Array(barcodeModule.memory.buffer);
+        const memBuffer = barcodeModule.memory.buffer;
+        const wasmMem = new Uint8Array(memBuffer);
         for (let i = 0; i < text.length; i++) {
           wasmMem[inputPtr + i] = text.charCodeAt(i);
         }
@@ -169,7 +225,9 @@
         const width = barcodeModule.get_width();
         const height = barcodeModule.get_height();
         if (width <= 0 || height <= 0) {
-          console.warn('Barcode invalid or too large.');
+          const canvas = document.getElementById('barcode-canvas');
+          canvas.width = 0;
+          canvas.height = 0;
           return;
         }
         const canvas = document.getElementById('barcode-canvas');
@@ -178,7 +236,7 @@
         canvas.style.width = `${width / scale}px`;
         const pixelPtr = barcodeModule.get_pixel_buffer();
         const pixelData = new Uint8ClampedArray(
-          barcodeModule.memory.buffer,
+          memBuffer,
           pixelPtr,
           width * height * 4,
         );
