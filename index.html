@@ -107,7 +107,7 @@
           <input
             type="text"
             id="barcode-input"
-            value="(421) 032"
+            value=""
             placeholder="Enter text..."
             oninput="renderBarcode()"
           />
@@ -115,6 +115,7 @@
           <select id="dpr-input" onchange="renderBarcode()">
             <option value="1">1x</option>
             <option value="2">2x</option>
+            <option value="3">3x</option>
             <option value="4">4x</option>
           </select>
         </div>
@@ -134,8 +135,7 @@
             ><span>^CAN</span><span>^EM</span><span>^SUB</span><span>^ESC</span
             ><span>^FS</span><span>^GS</span><span>^RS</span><span>^US</span
             ><span>^DEL</span><span>^FNC1</span><span>^FNC2</span
-            ><span>^FNC3</span> <span>^FNC4</span> <span>^CODEA</span
-            ><span>^CODEB</span><span>^CODEC</span>
+            ><span>^FNC3</span> <span>^FNC4</span>
           </div>
           <br />
           <em
@@ -185,20 +185,14 @@
           const bytes = await response.arrayBuffer();
           const { instance } = await WebAssembly.instantiate(bytes, {});
           barcodeModule = instance.exports;
-          if (barcodeModule.get_max_input_length) {
-            const maxLen = barcodeModule.get_max_input_length();
-            const inputEl = document.getElementById('barcode-input');
-            inputEl.maxLength = maxLen;
-            inputEl.title = `Max buffer: ${maxLen} chars`;
-          }
+          const maxLen = barcodeModule.get_max_input_length();
+          const inputEl = document.getElementById('barcode-input');
+          inputEl.maxLength = maxLen;
+          inputEl.title = `Max buffer: ${maxLen} chars`;
           const dpr = window.devicePixelRatio || 1;
           const roundedDpr = Math.ceil(dpr);
           const dprSelect = document.getElementById('dpr-input');
-          if (roundedDpr >= 1 && roundedDpr <= 4) {
-            dprSelect.value = roundedDpr;
-          } else if (roundedDpr > 4) {
-            dprSelect.value = 1;
-          }
+          dprSelect.value = Math.min(roundedDpr, 4);
           renderBarcode();
           console.log('Barcode module initialized.');
         } catch (err) {
@@ -206,13 +200,10 @@
         }
       }
       function renderBarcode() {
-        if (!barcodeModule) return;
         const inputEl = document.getElementById('barcode-input');
         const dprEl = document.getElementById('dpr-input');
-        const scale = parseInt(dprEl.value, 10) || 1;
-        if (barcodeModule.set_dpr) {
-          barcodeModule.set_dpr(scale);
-        }
+        const scale = +dprEl.value;
+        barcodeModule.set_dpr(scale);
         const text = inputEl.value;
         const inputPtr = barcodeModule.get_data_buffer();
         const memBuffer = barcodeModule.memory.buffer;
@@ -224,12 +215,6 @@
         barcodeModule.render();
         const width = barcodeModule.get_width();
         const height = barcodeModule.get_height();
-        if (width <= 0 || height <= 0) {
-          const canvas = document.getElementById('barcode-canvas');
-          canvas.width = 0;
-          canvas.height = 0;
-          return;
-        }
         const canvas = document.getElementById('barcode-canvas');
         canvas.width = width;
         canvas.height = height;
