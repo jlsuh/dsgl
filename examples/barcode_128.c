@@ -245,7 +245,7 @@ static inline void fallback_fnc4_in_code_set_c(RenderContext *ctx)
     symbol_buffer[(*ctx->next_symbol_idx)++] = FNC4_CODE_SET_B;
 }
 
-static inline bool try_process_keyword(RenderContext *ctx)
+static inline bool parse_keyword(RenderContext *ctx)
 {
     int keyword_idx = match_keyword(data_buffer, *ctx->next_input_idx);
     if (-1 == keyword_idx)
@@ -275,7 +275,7 @@ static inline bool try_process_keyword(RenderContext *ctx)
 
 void process_code_set_A(RenderContext *ctx)
 {
-    if (try_process_keyword(ctx))
+    if (parse_keyword(ctx))
         return;
     bool is_escape_seq_ahead =
         (-1 != match_keyword(data_buffer, *ctx->next_input_idx));
@@ -316,7 +316,7 @@ void process_code_set_A(RenderContext *ctx)
 
 void process_code_set_B(RenderContext *ctx)
 {
-    if (try_process_keyword(ctx))
+    if (parse_keyword(ctx))
         return;
     bool is_escape_seq_ahead =
         (-1 != match_keyword(data_buffer, *ctx->next_input_idx));
@@ -353,7 +353,7 @@ void process_code_set_B(RenderContext *ctx)
 
 void process_code_set_C(RenderContext *ctx)
 {
-    if (try_process_keyword(ctx))
+    if (parse_keyword(ctx))
         return;
     if (is_optimizable_with_code_set_c(data_buffer, *ctx->next_input_idx, 2,
                                        ctx->data_len)) {
