@@ -273,7 +273,7 @@ static inline bool try_process_keyword(RenderContext *ctx)
     return true;
 }
 
-void process_code_set_a(RenderContext *ctx)
+void process_code_set_A(RenderContext *ctx)
 {
     if (try_process_keyword(ctx))
         return;
@@ -314,7 +314,7 @@ void process_code_set_a(RenderContext *ctx)
     }
 }
 
-void process_code_set_b(RenderContext *ctx)
+void process_code_set_B(RenderContext *ctx)
 {
     if (try_process_keyword(ctx))
         return;
@@ -351,7 +351,7 @@ void process_code_set_b(RenderContext *ctx)
     }
 }
 
-void process_code_set_c(RenderContext *ctx)
+void process_code_set_C(RenderContext *ctx)
 {
     if (try_process_keyword(ctx))
         return;
@@ -366,8 +366,8 @@ void process_code_set_c(RenderContext *ctx)
     }
 }
 
-CodeSetStrategy code_set_strategies[] = {process_code_set_a, process_code_set_b,
-                                         process_code_set_c};
+CodeSetStrategy code_set_strategies[] = {process_code_set_A, process_code_set_B,
+                                         process_code_set_C};
 
 void render(void)
 {
